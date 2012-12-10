@@ -14,7 +14,7 @@ Executors
 
 Executors perform work that is requested from them asynchronously.
 
-Currently, all executores use their own private threads.
+Currently, all executors use their own private threads.
 
 Queues
 ~~~~~~
