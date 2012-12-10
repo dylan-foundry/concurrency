@@ -1,0 +1,9 @@
+
+open tasks:
+
+- convenience make() methods and other pretty stuff
+- implement scheduled executors (and queues, if needed)
+- implement some form of central dispatch
+- find a nice interface for futures and implement it
+- convert the former queue-demo to testworks as appropriate
+- should executors offer integrated profiling/stats of some sort?
