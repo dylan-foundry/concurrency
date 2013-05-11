@@ -4,16 +4,8 @@ author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
 define abstract class <thread-executor> (<executor>)
-  constant slot executor-queue :: <queue> = make(<locked-queue>),
-    init-keyword: queue:;
-
   slot executor-threads :: <sequence>;
 end class;
-
-define method executor-request (executor :: <executor>, work :: <work>)
- => ();
-  enqueue(executor-queue(executor), work);
-end method;
 
 define method executor-shutdown (executor :: <thread-executor>,
                                  #key drain? :: <boolean> = #t,
