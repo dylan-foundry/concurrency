@@ -5,5 +5,6 @@ files: library
        locked-queue
        executor
        thread-executor
+       synchronous-executor
        work
        locked-work

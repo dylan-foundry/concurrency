@@ -19,7 +19,10 @@ define module concurrency
     <thread-executor>,
     executor-shutdown,
     <single-thread-executor>,
-    <fixed-thread-executor>;
+    <fixed-thread-executor>,
+    <synchronous-executor>,
+    executor-execute,
+    executor-execute-one;
 
   export
     <queue>,
