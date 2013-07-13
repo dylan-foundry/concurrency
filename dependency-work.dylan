@@ -1,5 +1,5 @@
 module: concurrency
-synopsis: Blockable work items.
+synopsis: Work items with dependencies.
 author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
