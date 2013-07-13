@@ -30,7 +30,7 @@ define method initialize (work :: <dependency-work>, #rest keys, #key, #all-keys
       end;
     end;
     if (blocked?)
-      work-switch-state(work, blocked:);
+      %work-switch-state(work, blocked:);
     end;
   end;
 end method;
