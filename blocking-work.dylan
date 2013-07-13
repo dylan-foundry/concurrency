@@ -52,7 +52,7 @@ define method work-finished-dependency (work :: <blocking-work>, dependency :: <
   with-lock (work-finish-lock(work))
     work-unfinished-dependencies(work) := remove!(work-unfinished-dependencies(work), dependency);
     if (empty?(work-unfinished-dependencies(work)))
-      work-switch-state(work, ready:);
+      %work-switch-state(work, ready:);
     end;
   end;
 end method;
@@ -62,6 +62,7 @@ define method work-finish (work :: <blocking-work>)
   with-lock (work-lock(work))
     next-method();
     for (dependent :: <blocking-work> in work-dependents(work))
+    %work-switch-state(work, finished:);
       work-finished-dependency(dependent, work);
     end;
   end;

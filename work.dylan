@@ -51,19 +51,25 @@ define method work-perform (work :: <work>)
   end;
 end method;
 
-define method work-switch-state (work :: <work>, state :: <work-state>)
+define method %work-switch-state (work :: <work>, state :: <work-state>)
+ => ();
   work-state(work) := state;
+end method;
+
+define method work-switch-state (work :: <work>, state :: <work-state>)
+ => ();
+  %work-switch-state(work, state);
 end method;
 
 define method work-start (work :: <work>)
  => ();
   work-thread(work) := current-thread();
-  work-switch-state(work, started:);
+  %work-switch-state(work, started:);
 end method;
 
 define method work-finish (work :: <work>)
  => ();
-  work-switch-state(work, finished:);
+  %work-switch-state(work, finished:);
 end method;
 
 define method work-execute (work :: <work>)

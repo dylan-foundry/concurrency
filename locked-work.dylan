@@ -29,6 +29,20 @@ define method work-switch-state (work :: <locked-work>, state :: <work-state>)
   end;
 end method;
 
+define method work-start (work :: <locked-work>)
+  => ();
+  with-lock (work-lock(work))
+    next-method();
+  end;
+end method;
+
+define method work-finish (work :: <locked-work>)
+  => ();
+  with-lock (work-lock(work))
+    next-method();
+  end;
+end method;
+
 /* Wait for the given work item to reach the given state
  */
 define method work-wait (work :: <locked-work>, state :: <work-state>)
