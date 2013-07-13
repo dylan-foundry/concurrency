@@ -21,7 +21,7 @@ end method;
 
 /* Wait for the given work item to reach the given state
  */
-define method work-wait (work :: <locked-work>, state :: <symbol>)
+define method work-wait (work :: <locked-work>, state :: <work-state>)
   => ();
   with-lock (work-lock(work))
     iterate again ()

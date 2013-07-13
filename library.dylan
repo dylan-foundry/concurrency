@@ -40,6 +40,8 @@ define module concurrency
 
   export
     <work>,
+    <work-state>,
+    work-state,
     work-perform,
     work-thread,
     work-started?,
