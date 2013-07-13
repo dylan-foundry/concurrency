@@ -41,7 +41,7 @@ define method work-add-dependent (work :: <blocking-work>, other :: <blocking-wo
     if (work-finished?(work))
       #f
     else
-      work-dependents(work) := add!(work-dependents(work), work);
+      work-dependents(work) := add!(work-dependents(work), other);
       #t;
     end;
   end;
@@ -60,9 +60,8 @@ end method;
 define method work-finish (work :: <blocking-work>)
   => ();
   with-lock (work-lock(work))
-    next-method();
-    for (dependent :: <blocking-work> in work-dependents(work))
     %work-switch-state(work, finished:);
+    for (dependent in work-dependents(work))
       work-finished-dependency(dependent, work);
     end;
   end;
