@@ -7,14 +7,15 @@ define class <blocking-queue> (<locked-queue>)
   constant slot queue-blocked-work :: <deque> = make(<deque>);
 end class;
 
-define method %unblock (queue :: <blocking-queue>, work :: <blocking-work>)
+define method %unblock (queue :: <blocking-queue>, work :: <work>)
   %enqueue(queue, work);
   remove!(queue-blocked-work(queue), work);
 end method;
 
 define method %unblock-all (queue :: <blocking-queue>)
-  let unblocked = choose(complement(work-blocked?), queue-blocked-work(queue));
-  for (work :: <blocking-work> in unblocked)
+  let unblocked = choose(complement(work-blocked?),
+                         queue-blocked-work(queue));
+  for (work :: <work> in unblocked)
     %unblock(queue, work);
   end;
 end method;
@@ -25,7 +26,7 @@ define method %empty? (queue :: <blocking-queue>)
   next-method();
 end method;
 
-define method %enqueue (queue :: <blocking-queue>, work :: <blocking-work>)
+define method %enqueue (queue :: <blocking-queue>, work :: <work>)
  => ();
   if (work-blocked?(work))
     add!(queue-blocked-work(queue), work);

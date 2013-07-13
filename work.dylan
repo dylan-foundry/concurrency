@@ -21,7 +21,7 @@ end class;
 
 define function work-blocked? (work :: <work>)
   => (blocked? :: <boolean>);
-  work-state(work) == blocked:; // XXX can't happen for non-<blocking-work>
+  work-state(work) == blocked:;
 end function;
 
 define function work-started? (work :: <work>)
