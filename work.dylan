@@ -7,6 +7,9 @@ define constant <work-state> =
   one-of(new:, started:, finished:);
 
 define class <work> (<object>)
+  // name of this work item
+  constant slot work-name :: false-or(<string>) = #f,
+    init-keyword: name:;
   // function performing the work
   constant slot work-function :: <function>,
     required-init-keyword: function:;
