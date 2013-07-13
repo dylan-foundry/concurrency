@@ -88,11 +88,16 @@ define method enqueue (queue :: <locked-queue>, object :: <object>)
                   thread: current-thread(),
                   queue: queue));
     else
-      add!(queue-deque(queue), object);
+      %enqueue(queue, object);
       sequence-point();
       release(queue-notification(queue));
     end;
   end;
+end method;
+
+define method %enqueue (queue :: <locked-queue>, object :: <object>)
+  => ();
+  add!(queue-deque(queue), object);  
 end method;
 
 /* Dequeue the next available item from the queue
@@ -122,10 +127,15 @@ define method dequeue (queue :: <locked-queue>)
           repeat();
         end;
       else
-        pop-last(deque);
+        %dequeue(queue);
       end;
     end;
   end;
+end method;
+
+define method %dequeue (queue :: <locked-queue>)
+ => (object :: <object>);
+  pop-last(queue-deque(queue));
 end method;
 
 /* Stops the queue so that submitted work can still continue
