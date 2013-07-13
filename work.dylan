@@ -37,12 +37,16 @@ end function;
 
 define method work-perform (work :: <work>)
   => ();
-  work-start(work);
+  %work-started(work);
   block ()
     work-execute(work);
   cleanup
-    work-finish(work);
+    %work-finished(work);
   end;
+end method;
+
+define method work-execute (work :: <work>)
+  work.work-function();
 end method;
 
 define method %work-switch-state (work :: <work>, state :: <work-state>)
@@ -50,17 +54,13 @@ define method %work-switch-state (work :: <work>, state :: <work-state>)
   work-state(work) := state;
 end method;
 
-define method work-start (work :: <work>)
+define method %work-started (work :: <work>)
  => ();
   work-thread(work) := current-thread();
   %work-switch-state(work, started:);
 end method;
 
-define method work-finish (work :: <work>)
+define method %work-finished (work :: <work>)
  => ();
   %work-switch-state(work, finished:);
-end method;
-
-define method work-execute (work :: <work>)
-  work.work-function();
 end method;

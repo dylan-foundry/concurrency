@@ -57,7 +57,7 @@ define method work-finished-dependency (work :: <dependency-work>, dependency ::
   end;
 end method;
 
-define method work-finish (work :: <dependency-work>)
+define method %work-finished (work :: <dependency-work>)
   => ();
   with-lock (work-lock(work))
     %work-switch-state(work, finished:);
