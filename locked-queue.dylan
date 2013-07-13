@@ -75,15 +75,6 @@ define class <queue-stopped> (<queue-condition>)
 end class;
 
 
-/* Find out how much outstanding work the queue has
- */
-define method backlog (queue :: <locked-queue>)
- => (size-of-queue :: <integer>);
-  with-lock (queue-lock(queue))
-    size(queue-deque(queue));
-  end;
-end method;
-
 /* Enqueue a work item onto the queue
  *
  * May signal <queue-stopped> when
