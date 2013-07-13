@@ -32,6 +32,7 @@ define module concurrency
     <locked-queue>,
     stop-queue,
     interrupt-queue,
+    <blocking-queue>,
     <queue-condition>,
     queue-condition-thread,
     queue-condition-queue,
@@ -48,6 +49,8 @@ define module concurrency
     work-started?,
     work-finished?,
     <locked-work>,
-    work-wait;
+    work-wait,
+    <blocking-work>,
+    work-dependencies;
 
 end module;
