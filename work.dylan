@@ -35,12 +35,6 @@ define function work-finished? (work :: <work>)
   work-state(work) == finished:;
 end function;
 
-define generic work-start (work :: <work>)
- => ();
-
-define generic work-finish (work :: <work>)
- => ();
-
 define method work-perform (work :: <work>)
   => ();
   work-start(work);
@@ -54,11 +48,6 @@ end method;
 define method %work-switch-state (work :: <work>, state :: <work-state>)
  => ();
   work-state(work) := state;
-end method;
-
-define method work-switch-state (work :: <work>, state :: <work-state>)
- => ();
-  %work-switch-state(work, state);
 end method;
 
 define method work-start (work :: <work>)

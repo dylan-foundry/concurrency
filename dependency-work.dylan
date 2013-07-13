@@ -19,7 +19,9 @@ end class;
 define method initialize (work :: <dependency-work>, #rest keys, #key, #all-keys)
  => ();
   next-method();
-  with-lock (work-scheduling-lock(work))
+  // we need to take our lock because dependencies
+  // may well be active already and call us back
+  with-lock (work-lock(work))
     let blocked? :: <boolean> = #f;
     for (dependency :: <dependency-work> in work-dependencies(work))
       if (work-add-dependent(dependency, work))
@@ -47,7 +49,7 @@ end method;
 
 define method work-finished-dependency (work :: <dependency-work>, dependency :: <dependency-work>)
  => ();
-  with-lock (work-scheduling-lock(work))
+  with-lock (work-lock(work))
     work-unfinished-dependencies(work) := remove!(work-unfinished-dependencies(work), dependency);
     if (empty?(work-unfinished-dependencies(work)))
       %work-switch-state(work, ready:);

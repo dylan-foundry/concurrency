@@ -7,12 +7,8 @@ copyright: See accompanying file LICENSE
  */
 define class <locked-work> (<work>)
   // lock and notification for work item state
-  // can be used to wait for state changes
   slot work-lock :: <simple-lock>;
   slot work-notification :: <notification>;
-  // lock synchronizing queue interaction (enqueue,block,unblock)
-  // depends on the respective queue lock once we have a queue
-  constant slot work-scheduling-lock :: <simple-lock> = make(<simple-lock>);
 end class;
 
 /* Initializer - create the required lock and notification
@@ -24,16 +20,16 @@ define method initialize (work :: <locked-work>, #rest keys, #key, #all-keys)
   work-notification(work) := make(<notification>, lock: work-lock(work));
 end method;
 
-/* Override - lock and notify when switching state
+/* Override - notify state changes
  */
-define method work-switch-state (work :: <locked-work>, state :: <work-state>)
-  => ();
-  with-lock (work-lock(work))
-    next-method();
-    release-all(work-notification(work));
-  end;
+define method %work-switch-state (work :: <locked-work>, state :: <work-state>)
+ => ();
+  next-method();
+  release-all(work-notification(work));
 end method;
 
+/* Override - lock and delegate up
+ */
 define method work-start (work :: <locked-work>)
   => ();
   with-lock (work-lock(work))
@@ -41,6 +37,8 @@ define method work-start (work :: <locked-work>)
   end;
 end method;
 
+/* Override - lock and delegate up
+ */
 define method work-finish (work :: <locked-work>)
   => ();
   with-lock (work-lock(work))

@@ -9,7 +9,7 @@ end class;
 
 define method %unblock (queue :: <blocking-queue>, work :: <locked-work>)
  => (was-blocked? :: <boolean>)
-  with-lock (work-scheduling-lock(work))
+  with-lock (work-lock(work))
     let blocked = work-blocked?(work);
     if (~blocked)
       %enqueue-internal(queue, work);
@@ -41,7 +41,7 @@ end method;
 
 define method %enqueue (queue :: <blocking-queue>, work :: <locked-work>)
  => ();
-  with-lock (work-scheduling-lock(work))
+  with-lock (work-lock(work))
     next-method();
   end;
 end method;
