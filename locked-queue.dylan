@@ -80,9 +80,14 @@ define method %empty? (queue :: <locked-queue>)
   empty?(queue-deque(queue));
 end method;
 
-define method %enqueue (queue :: <locked-queue>, object :: <object>)
+define method %enqueue-internal (queue :: <locked-queue>, object :: <object>)
   => ();
   add!(queue-deque(queue), object);  
+end method;
+
+define method %enqueue (queue :: <locked-queue>, object :: <object>)
+  => ();
+  %enqueue-internal(queue, object);
 end method;
 
 define method %dequeue (queue :: <locked-queue>)

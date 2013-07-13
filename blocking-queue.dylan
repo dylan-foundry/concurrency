@@ -4,20 +4,24 @@ author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
 define class <blocking-queue> (<locked-queue>)
-  constant slot queue-blocked-work :: <deque> = make(<deque>);
+  slot queue-blocked-work :: <list> = #();
 end class;
 
-define method %unblock (queue :: <blocking-queue>, work :: <work>)
-  %enqueue(queue, work);
-  remove!(queue-blocked-work(queue), work);
+define method %unblock (queue :: <blocking-queue>, work :: <locked-work>)
+ => (was-blocked? :: <boolean>)
+  with-lock (work-scheduling-lock(work))
+    let blocked = work-blocked?(work);
+    if (~blocked)
+      %enqueue-internal(queue, work);
+    end;
+    blocked;
+  end;
 end method;
 
 define method %unblock-all (queue :: <blocking-queue>)
-  let unblocked = choose(complement(work-blocked?),
-                         queue-blocked-work(queue));
-  for (work :: <work> in unblocked)
-    %unblock(queue, work);
-  end;
+  queue-blocked-work(queue) :=
+    choose(curry(%unblock, queue),
+           queue-blocked-work(queue));
 end method;
 
 define method %empty? (queue :: <blocking-queue>)
@@ -26,11 +30,18 @@ define method %empty? (queue :: <blocking-queue>)
   next-method();
 end method;
 
-define method %enqueue (queue :: <blocking-queue>, work :: <work>)
+define method %enqueue-internal (queue :: <blocking-queue>, work :: <locked-work>)
  => ();
   if (work-blocked?(work))
-    add!(queue-blocked-work(queue), work);
+    queue-blocked-work(queue) := add!(queue-blocked-work(queue), work);
   else
+    next-method();
+  end;
+end method;
+
+define method %enqueue (queue :: <blocking-queue>, work :: <locked-work>)
+ => ();
+  with-lock (work-scheduling-lock(work))
     next-method();
   end;
 end method;

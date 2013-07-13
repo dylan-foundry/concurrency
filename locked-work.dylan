@@ -6,8 +6,13 @@ copyright: See accompanying file LICENSE
 /* Locked work items that allow waiting for state transitions
  */
 define class <locked-work> (<work>)
+  // lock and notification for work item state
+  // can be used to wait for state changes
   slot work-lock :: <simple-lock>;
   slot work-notification :: <notification>;
+  // lock synchronizing queue interaction (enqueue,block,unblock)
+  // depends on the respective queue lock once we have a queue
+  constant slot work-scheduling-lock :: <simple-lock> = make(<simple-lock>);
 end class;
 
 /* Initializer - create the required lock and notification

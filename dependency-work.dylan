@@ -12,8 +12,6 @@ define class <dependency-work> (<locked-work>)
   // items that depend on this work being done
   slot work-dependents :: <list> = #();
 
-  // lock for finishing dependencies
-  constant slot work-finish-lock :: <simple-lock> = make(<simple-lock>);
   // dependencies not yet finished
   slot work-unfinished-dependencies :: <list> = #();
 end class;
@@ -21,7 +19,7 @@ end class;
 define method initialize (work :: <dependency-work>, #rest keys, #key, #all-keys)
  => ();
   next-method();
-  with-lock (work-finish-lock(work))
+  with-lock (work-scheduling-lock(work))
     let blocked? :: <boolean> = #f;
     for (dependency :: <dependency-work> in work-dependencies(work))
       if (work-add-dependent(dependency, work))
@@ -49,7 +47,7 @@ end method;
 
 define method work-finished-dependency (work :: <dependency-work>, dependency :: <dependency-work>)
  => ();
-  with-lock (work-finish-lock(work))
+  with-lock (work-scheduling-lock(work))
     work-unfinished-dependencies(work) := remove!(work-unfinished-dependencies(work), dependency);
     if (empty?(work-unfinished-dependencies(work)))
       %work-switch-state(work, ready:);
