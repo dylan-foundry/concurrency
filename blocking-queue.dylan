@@ -7,6 +7,12 @@ define class <blocking-queue> (<locked-queue>)
   constant slot queue-blocked-work :: <deque> = make(<deque>);
 end class;
 
+define method %empty? (queue :: <blocking-queue>)
+ => (empty? :: <boolean>);
+  unblock(queue);
+  next-method();
+end method;
+
 define method %enqueue (queue :: <blocking-queue>, work :: <blocking-work>)
  => ();
   if (work-blocked?(work))

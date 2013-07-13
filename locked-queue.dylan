@@ -75,12 +75,28 @@ define class <queue-stopped> (<queue-condition>)
 end class;
 
 
+define method %empty? (queue :: <locked-queue>)
+ => (empty? :: <boolean>);
+  empty?(queue-deque(queue));
+end method;
+
+define method %enqueue (queue :: <locked-queue>, object :: <object>)
+  => ();
+  add!(queue-deque(queue), object);  
+end method;
+
+define method %dequeue (queue :: <locked-queue>)
+ => (object :: <object>);
+  pop-last(queue-deque(queue));
+end method;
+
+
 /* Enqueue a work item onto the queue
  *
  * May signal <queue-stopped> when
  * the queue no longer accepts work.
  */
-define method enqueue (queue :: <locked-queue>, object :: <object>)
+define method enqueue (queue :: <locked-queue>, #rest objects)
  => ();
   with-lock (queue-lock(queue))
     if (queue-stopped?(queue))
@@ -88,16 +104,13 @@ define method enqueue (queue :: <locked-queue>, object :: <object>)
                   thread: current-thread(),
                   queue: queue));
     else
-      %enqueue(queue, object);
+      for (object in objects)
+        %enqueue(queue, object);
+      end;
       sequence-point();
       release(queue-notification(queue));
     end;
   end;
-end method;
-
-define method %enqueue (queue :: <locked-queue>, object :: <object>)
-  => ();
-  add!(queue-deque(queue), object);  
 end method;
 
 /* Dequeue the next available item from the queue
@@ -107,8 +120,6 @@ end method;
  */
 define method dequeue (queue :: <locked-queue>)
  => (object :: <object>);
-  let deque = queue-deque(queue);
-
   with-lock (queue-lock(queue))
     iterate repeat ()
       synchronize-side-effects();
@@ -117,7 +128,7 @@ define method dequeue (queue :: <locked-queue>)
                     thread: current-thread(),
                     queue: queue));
       end;
-      if (empty?(deque))
+      if (%empty?(queue))
         if (queue-stopped?(queue))
           signal(make(<queue-stopped>,
                       thread: current-thread(),
@@ -131,11 +142,6 @@ define method dequeue (queue :: <locked-queue>)
       end;
     end;
   end;
-end method;
-
-define method %dequeue (queue :: <locked-queue>)
- => (object :: <object>);
-  pop-last(queue-deque(queue));
 end method;
 
 /* Stops the queue so that submitted work can still continue
