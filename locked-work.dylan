@@ -19,6 +19,16 @@ define method initialize (work :: <locked-work>, #rest keys, #key, #all-keys)
   work-notification(work) := make(<notification>, lock: work-lock(work));
 end method;
 
+/* Override - lock and notify when switching state
+ */
+define method work-switch-state (work :: <locked-work>, state :: <work-state>)
+  => ();
+  with-lock (work-lock(work))
+    next-method();
+    release-all(work-notification(work));
+  end;
+end method;
+
 /* Wait for the given work item to reach the given state
  */
 define method work-wait (work :: <locked-work>, state :: <work-state>)
@@ -36,25 +46,5 @@ define method work-wait (work :: <locked-work>, state :: <work-state>)
           again();
       end;
     end;
-  end;
-end method;
-
-/* Override - wake waiters when work is started
- */
-define method work-start (work :: <locked-work>)
- => ();
-  with-lock (work-lock(work))
-    next-method();
-    release-all(work-notification(work));
-  end;
-end method;
-
-/* Override - wake waiters when work is finished
- */
-define method work-finish (work :: <locked-work>)
- => ();
-  with-lock (work-lock(work))
-    next-method();
-    release-all(work-notification(work));
   end;
 end method;
