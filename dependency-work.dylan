@@ -3,7 +3,7 @@ synopsis: Blockable work items.
 author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
-define class <blocking-work> (<locked-work>)
+define class <dependency-work> (<locked-work>)
   // other items this work depends on
   // immutability intended to discourage cycles
   constant slot work-dependencies :: <list> = #(),
@@ -18,12 +18,12 @@ define class <blocking-work> (<locked-work>)
   slot work-unfinished-dependencies :: <list> = #();
 end class;
 
-define method initialize (work :: <blocking-work>, #rest keys, #key, #all-keys)
+define method initialize (work :: <dependency-work>, #rest keys, #key, #all-keys)
  => ();
   next-method();
   with-lock (work-finish-lock(work))
     let blocked? :: <boolean> = #f;
-    for (dependency :: <blocking-work> in work-dependencies(work))
+    for (dependency :: <dependency-work> in work-dependencies(work))
       if (work-add-dependent(dependency, work))
         work-unfinished-dependencies(work) := add!(work-unfinished-dependencies(work), dependency);
         blocked? := #t;
@@ -35,7 +35,7 @@ define method initialize (work :: <blocking-work>, #rest keys, #key, #all-keys)
   end;
 end method;
 
-define method work-add-dependent (work :: <blocking-work>, other :: <blocking-work>)
+define method work-add-dependent (work :: <dependency-work>, other :: <dependency-work>)
  => (added? :: <boolean>);
   with-lock (work-lock(work))
     if (work-finished?(work))
@@ -47,7 +47,7 @@ define method work-add-dependent (work :: <blocking-work>, other :: <blocking-wo
   end;
 end method;
 
-define method work-finished-dependency (work :: <blocking-work>, dependency :: <blocking-work>)
+define method work-finished-dependency (work :: <dependency-work>, dependency :: <dependency-work>)
  => ();
   with-lock (work-finish-lock(work))
     work-unfinished-dependencies(work) := remove!(work-unfinished-dependencies(work), dependency);
@@ -57,7 +57,7 @@ define method work-finished-dependency (work :: <blocking-work>, dependency :: <
   end;
 end method;
 
-define method work-finish (work :: <blocking-work>)
+define method work-finish (work :: <dependency-work>)
   => ();
   with-lock (work-lock(work))
     %work-switch-state(work, finished:);

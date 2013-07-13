@@ -50,7 +50,7 @@ define module concurrency
     work-finished?,
     <locked-work>,
     work-wait,
-    <blocking-work>,
+    <dependency-work>,
     work-dependencies;
 
 end module;

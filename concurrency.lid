@@ -9,4 +9,4 @@ files: library
        synchronous-executor
        work
        locked-work
-       blocking-work
+       dependency-work
