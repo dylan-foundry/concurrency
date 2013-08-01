@@ -9,8 +9,9 @@ define abstract class <thread-executor> (<executor>)
   slot executor-threads :: <sequence> = #();
 end class;
 
-define method initialize (executor :: <single-thread-executor>, #rest args, #key, #all-keys)
+define method initialize (executor :: <thread-executor>, #rest args, #key, #all-keys)
   => ();
+  next-method();
   if (executor-autostart?(executor))
     executor-start(executor);
   end if;
