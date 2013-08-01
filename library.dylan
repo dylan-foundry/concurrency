@@ -1,4 +1,7 @@
 module: dylan-user
+synopsis: Concurrency library.
+author: Ingo Albrecht <prom@berlin.ccc.de>
+copyright: See accompanying file LICENSE
 
 define library concurrency
   use common-dylan;

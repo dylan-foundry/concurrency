@@ -1,5 +1,7 @@
 module: concurrency-test-suite
 synopsis: Test suite for the concurrency library.
+author: Ingo Albrecht <prom@berlin.ccc.de>
+copyright: See accompanying file LICENSE
 
 define suite concurrency-test-suite ()
   test basic-<synchronous-executor>-test;

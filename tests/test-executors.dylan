@@ -1,4 +1,7 @@
 module: concurrency-test-suite
+synopsis: Tests for executors
+author: Ingo Albrecht <prom@berlin.ccc.de>
+copyright: See accompanying file LICENSE
 
 define test basic-<synchronous-executor>-test ()
   let executor = make(<synchronous-executor>,

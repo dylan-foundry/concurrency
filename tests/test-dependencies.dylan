@@ -1,4 +1,7 @@
 module: concurrency-test-suite
+synopsis: Tests for work dependencies
+author: Ingo Albrecht <prom@berlin.ccc.de>
+copyright: See accompanying file LICENSE
 
 define test basic-dependency-test ()
   let executor = make(<fixed-thread-executor>,
