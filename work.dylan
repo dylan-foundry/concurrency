@@ -4,7 +4,13 @@ author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
 define constant <work-state> =
-  one-of(ready:, blocked:, started:, finished:);
+  one-of(
+         new:,      // newly created
+         blocked:,  // enqueued but blocked
+         ready:,    // enqueued and ready to run
+         started:,  // execution started
+         finished:  // execution finished
+        );
 
 define class <work> (<object>)
   // name of this work item
@@ -14,7 +20,7 @@ define class <work> (<object>)
   constant slot work-function :: <function>,
     required-init-keyword: function:;
   // current state of this work
-  slot work-state :: <work-state> = ready:;
+  slot work-state :: <work-state> = new:;
   // thread that processed this work item
   slot work-thread :: false-or(<thread>) = #f;
 end class;
