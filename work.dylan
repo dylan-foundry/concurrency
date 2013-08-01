@@ -5,9 +5,8 @@ copyright: See accompanying file LICENSE
 
 define constant <work-state> =
   one-of(
-         new:,      // newly created
-         blocked:,  // enqueued but blocked
-         ready:,    // enqueued and ready to run
+         blocked:,  // blocked
+         ready:,    // ready to run
          started:,  // execution started
          finished:  // execution finished
         );
@@ -20,7 +19,7 @@ define class <work> (<object>)
   constant slot work-function :: <function>,
     required-init-keyword: function:;
   // current state of this work
-  slot work-state :: <work-state> = new:;
+  slot work-state :: <work-state> = ready:;
   // thread that processed this work item
   slot work-thread :: false-or(<thread>) = #f;
 end class;

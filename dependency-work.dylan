@@ -30,7 +30,9 @@ define method initialize (work :: <dependency-work>, #rest keys, #key, #all-keys
         blocked? := #t;
       end;
       if (blocked?)
-        %work-switch-state(work, blocked:);
+        if (work-state(work) == ready:)
+          %work-switch-state(work, blocked:);
+        end;
       end;
     end;
   end;
@@ -58,8 +60,10 @@ define method %work-finished-dependency (work :: <dependency-work>, dependency :
     // remove dependency from unfinished list
     work-unfinished-dependencies(work) := remove!(work-unfinished-dependencies(work), dependency);
     // switch to ready state when all dependencies are done
-    if (empty?(work-unfinished-dependencies(work)))
-      %work-switch-state(work, ready:);
+    if (work-state(work) == blocked:)
+      if (empty?(work-unfinished-dependencies(work)))
+        %work-switch-state(work, ready:);
+      end;
     end;
   end;
 end method;
