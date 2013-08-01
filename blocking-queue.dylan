@@ -45,8 +45,3 @@ define method %enqueue (queue :: <blocking-queue>, work :: <locked-work>)
     next-method();
   end;
 end method;
-
-define method %dequeue (queue :: <blocking-queue>)
-  => (object :: <object>);
-  next-method();
-end method;
