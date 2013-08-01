@@ -12,6 +12,7 @@ end library;
 define module concurrency-test-suite
   use common-dylan, exclude: { format-to-string };
   use format;
+  use format-out;
   use concurrency;
   use testworks;
 
