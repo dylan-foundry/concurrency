@@ -45,7 +45,7 @@ define method make-dependency-work()
                 let c = format-to-string("%s done before %s", work-name(w), name);
                 //check-true(c, work-finished?(w));
               end;
-              force-output(*standard-output*);
+              force-out();
             end method;
       let jw = make(<dependency-work>,
                     name: format-to-string("Dependency Work %d.%d", i, j),
@@ -63,11 +63,10 @@ define method make-dependency-work()
               let c = format-to-string("%s done before %s", work-name(w), name);
               //check-true(c, work-finished?(w));
             end;
-            force-output(*standard-output*);
+            force-out();
           end method;
     format-out("Generating %d\n", i);
     force-out();
-    force-output(*standard-output*);
     let iw = make(<dependency-work>,
                   name: format-to-string("Dependency Work %d", i),
                   function: curry(imethod, jwork, i),
