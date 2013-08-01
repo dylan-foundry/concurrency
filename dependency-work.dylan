@@ -19,38 +19,45 @@ end class;
 define method initialize (work :: <dependency-work>, #rest keys, #key, #all-keys)
  => ();
   next-method();
-  // we need to take our lock because dependencies
-  // may well be active already and call us back
+  // dependencies are immutable, so no need to lock
+  let dependencies = work-dependencies(work);
+  // set up dependencies
   with-lock (work-lock(work))
-    let blocked? :: <boolean> = #f;
-    for (dependency :: <dependency-work> in work-dependencies(work))
-      if (work-add-dependent(dependency, work))
-        work-unfinished-dependencies(work) := add!(work-unfinished-dependencies(work), dependency);
+    let blocked? = #f;
+    for (dependency :: <dependency-work> in dependencies)
+      if (%work-add-dependent(dependency, work))
+        %work-add-dependency(work, dependency);
         blocked? := #t;
       end;
-    end;
-    if (blocked?)
-      %work-switch-state(work, blocked:);
+      if (blocked?)
+        %work-switch-state(work, blocked:);
+      end;
     end;
   end;
 end method;
 
-define method work-add-dependent (work :: <dependency-work>, other :: <dependency-work>)
+define method %work-add-dependency (work :: <dependency-work>, dependency :: <dependency-work>)
+  work-unfinished-dependencies(work) := add!(work-unfinished-dependencies(work), dependency);
+end method;
+
+define method %work-add-dependent (work :: <dependency-work>, dependent :: <dependency-work>)
  => (added? :: <boolean>);
   with-lock (work-lock(work))
     if (work-finished?(work))
       #f
     else
-      work-dependents(work) := add!(work-dependents(work), other);
+      work-dependents(work) := add!(work-dependents(work), dependent);
       #t;
     end;
   end;
 end method;
 
-define method work-finished-dependency (work :: <dependency-work>, dependency :: <dependency-work>)
+define method %work-finished-dependency (work :: <dependency-work>, dependency :: <dependency-work>)
  => ();
   with-lock (work-lock(work))
+    // remove dependency from unfinished list
     work-unfinished-dependencies(work) := remove!(work-unfinished-dependencies(work), dependency);
+    // switch to ready state when all dependencies are done
     if (empty?(work-unfinished-dependencies(work)))
       %work-switch-state(work, ready:);
     end;
