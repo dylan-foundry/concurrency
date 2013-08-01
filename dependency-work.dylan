@@ -59,10 +59,14 @@ end method;
 
 define method %work-finished (work :: <dependency-work>)
   => ();
+  // we need to lock for the state change
   with-lock (work-lock(work))
     %work-switch-state(work, finished:);
-    for (dependent in work-dependents(work))
-      work-finished-dependency(dependent, work);
-    end;
+  end;
+  // safe because no dependents can be added in finished state
+  let dependents = work-dependents(work);
+  // unblock dependents
+  for (dependent in dependents)
+    %work-finished-dependency(dependent, work);
   end;
 end method;
