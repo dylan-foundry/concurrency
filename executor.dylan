@@ -3,6 +3,10 @@ synopsis: Executors.
 author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
+/* Abstract base class for executors
+ *
+ * These provide common features: a name and a queue.
+ */
 define abstract class <executor> (<object>)
   constant slot executor-name :: <string> = "executor",
     init-keyword: name:;
