@@ -20,6 +20,10 @@ define test basic-dependency-test ()
   check-work-finished(work);
 end test;
 
+/* Generates a 3-level 5-tree forest of dependent work items with a tree fanout of 5
+ *
+ * Returns a list of all work items.
+ */
 define method make-dependency-work()
  => (work :: <list>);
   let all = #();
