@@ -31,6 +31,7 @@ define module concurrency
     queue-name,
     enqueue,
     dequeue,
+    try-dequeue,
     <locked-queue>,
     stop-queue,
     interrupt-queue,

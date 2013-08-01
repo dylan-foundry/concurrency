@@ -15,3 +15,5 @@ define generic enqueue (queue :: <queue>, #rest objects)
 define generic dequeue (queue :: <queue>)
  => (object :: <object>);
 
+define generic try-dequeue (queue :: <queue>)
+ => (object :: false-or(<object>));

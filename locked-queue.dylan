@@ -90,9 +90,14 @@ define method %enqueue (queue :: <locked-queue>, object :: <object>)
   %enqueue-internal(queue, object);
 end method;
 
+define method %dequeue-internal (queue :: <locked-queue>)
+  => ();
+  pop-last(queue-deque(queue));
+end method;
+
 define method %dequeue (queue :: <locked-queue>)
  => (object :: <object>);
-  pop-last(queue-deque(queue));
+  %dequeue-internal(queue);
 end method;
 
 
@@ -146,6 +151,17 @@ define method dequeue (queue :: <locked-queue>)
         %dequeue(queue);
       end;
     end;
+  end;
+end method;
+
+define method try-dequeue (queue :: <locked-queue>)
+  => (object :: false-or(<object>));
+  with-lock (queue-lock(queue))
+    if(%empty?(queue))
+      #f
+    else
+      %dequeue(queue);
+    end
   end;
 end method;
 
