@@ -91,7 +91,7 @@ define method %enqueue (queue :: <locked-queue>, object :: <object>)
 end method;
 
 define method %dequeue-internal (queue :: <locked-queue>)
-  => ();
+  => (object :: <object>);
   pop-last(queue-deque(queue));
 end method;
 
