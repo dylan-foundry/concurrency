@@ -17,12 +17,14 @@ define module concurrency
     executor-name,
     executor-request,
     <thread-executor>,
-    executor-shutdown,
+    executor-start,
+    executor-stop,
+    executor-join,
     <single-thread-executor>,
     <fixed-thread-executor>,
     <synchronous-executor>,
-    executor-execute,
-    executor-execute-one;
+    executor-run,
+    executor-run-one;
 
   export
     <queue>,

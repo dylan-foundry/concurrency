@@ -18,16 +18,20 @@ copyright: See accompanying file LICENSE
 define class <synchronous-executor> (<executor>)
 end class;
 
-define method executor-execute (executor :: <synchronous-executor>)
+define method executor-run (executor :: <synchronous-executor>)
  => (work-performed :: <list>);
   let queue = executor-queue(executor);
   let performed = #();
-  block ()
+  block (return)
     iterate more-work()
-      let work :: <work> = dequeue(queue);
-      work-perform(work);
-      performed := add(performed, work);
-      more-work();
+      let work :: false-or(<work>) = try-dequeue(queue);
+      if (~work)
+        return();
+      else
+        work-perform(work);
+        performed := add(performed, work);
+        more-work();
+      end;
     end;
   exception (i :: <queue-condition>)
     // we got interrupted or stopped, quit processing
@@ -35,12 +39,14 @@ define method executor-execute (executor :: <synchronous-executor>)
   performed;
 end method;
 
-define method executor-execute-one (executor :: <synchronous-executor>)
+define method executor-run-one (executor :: <synchronous-executor>)
  => (work-performed :: false-or(<work>));  
   let queue = executor-queue(executor);
   block (return)
-    let work :: <work> = dequeue(queue);
-    work-perform(work);
+    let work :: false-or(<work>) = dequeue(queue);
+    if (work)
+      work-perform(work);
+    end;
     return(work);
   exception (i :: <queue-condition>)
     // we got interrupted or stopped
