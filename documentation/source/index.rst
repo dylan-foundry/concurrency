@@ -127,6 +127,11 @@ Queues
 
    :keyword name:
 
+   :discussion:
+
+     This is a base class for specific implementations
+     that modify queueing behaviour.
+
    :operations:
 
      * :gf:`dequeue`
@@ -135,7 +140,37 @@ Queues
 
 .. class:: <locked-queue>
 
+   Locked multi-reader multi-writer queue
+
    :superclasses: :class:`<queue>`
+
+   :discussion:
+
+     Locked multi-reader multi-writer queue
+
+     A notification is used for synchronization.
+     The associated lock is used for all queue state.
+
+     Locked queues can be :gf:`STOPPED <stop-queue>` so
+     that no further work will be accepted and processing
+     will end once all previously submitted work has been
+     finished.
+
+     After stopping, all further enqueue operations will
+     signal :class:`<queue-stopped>`.
+
+     Dequeue operations will continue until the queue has
+     been drained, whereupon they will also be signalled.
+
+     Locked queues can be :gf:`INTERRUPTED <interrupt-queue>`
+     so that no further work will be accepted or begun. Work
+     that has already been started will continue.
+
+     Interrupting implies stopping, so :gf:`enqueue` operations
+     will be signalled :class:`<queue-stopped>`.
+
+     :gf:`Dequeue <dequeue>` operations will signal
+     :class:`<queue-interrupt>`.
 
    :operations:
 
@@ -144,19 +179,40 @@ Queues
 
 .. generic-function:: dequeue
 
+   Dequeue the next available item from the queue.
+
    :signature: dequeue (queue) => (object)
 
    :parameter queue: An instance of :class:`<queue>`.
    :value object: An instance of :drm:`<object>`.
 
+   :discussion:
+
+     Dequeue the next available item from the queue.
+
+     May signal :class:`<queue-interrupt>` or
+     :class:`<queue-stopped>` when the queue has
+     reached the respective state.
+
 .. generic-function:: enqueue
+
+   Enqueue a work item onto the queue.
 
    :signature: enqueue (queue object) => ()
 
    :parameter queue: An instance of :class:`<queue>`.
    :parameter object: An instance of :drm:`<object>`.
 
+   :discussion:
+
+     Enqueue a work item onto the queue.
+
+     May signal :class:`<queue-stopped>` when
+     the queue no longer accepts work.
+
 .. generic-function:: queue-name
+
+   Returns the name of the queue.
 
    :signature: queue-name (queue) => (name?)
 
@@ -165,18 +221,44 @@ Queues
 
 .. generic-function:: interrupt-queue
 
+   Interrupts the queue, abandoning submitted work.
+
    :signature: interrupt-queue (queue) => ()
 
    :parameter queue: An instance of :class:`<locked-queue>`.
 
+   :discussion:
+
+     Interrupts the queue, abandoning submitted work.
+
+     Submitters will be signalled :class:`<queue-stopped>`
+     in :gf:`enqueue` if they try to submit further work.
+
+     Receivers will be signalled :class:`<queue-interrupt>`
+     at the first :gf:`dequeue` operation they perform.
+
 .. generic-function:: stop-queue
+
+   Stops the queue so that submitted work can still continue.
 
    :signature: stop-queue (queue) => ()
 
    :parameter queue: An instance of :class:`<locked-queue>`.
 
+   :discussion:
+
+     Stops the queue so that submitted work can still continue.
+
+     Submitters will be signalled :class:`<queue-stopped>`
+     in :gf:`enqueue` if they try to submit further work.
+
+     Receivers will be signalled :class:`<queue-stopped>`
+     in :gf:`dequeue` once the queue has been drained.
+
 .. class:: <queue-condition>
    :abstract:
+
+   Conditions related to <locked-queue> operations.
 
    :superclasses: :drm:`<condition>`
 
@@ -185,10 +267,13 @@ Queues
 
 .. class:: <queue-interrupt>
 
+   Signalled when the queue has been interrupted.
+
    :superclasses: :class:`<queue-condition>`
 
-
 .. class:: <queue-stopped>
+
+   Signalled when the queue has been stopped.
 
    :superclasses: :class:`<queue-condition>`
 

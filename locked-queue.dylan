@@ -4,34 +4,6 @@ author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
 /* Locked multi-reader multi-writer queue
- *
- * This is a base class for specific implementations
- * that modify queueing behaviour.
- *
- * A notification is used for synchronization.
- * The associated lock is used for all queue state.
- *
- *
- * Queues can be STOPPED so that no further work will be
- * accepted and processing will end once all previously
- * submitted work has been finished.
- *
- * After stopping, all further enqueue operations will
- * signal <queue-stopped>.
- *
- * Dequeue operations will continue until the queue has
- * been drained, whereupon they will also be signalled.
- *
- *
- * Queues can be INTERRUPTED so that no further work will
- * be accepted or begun. Work that has already been started
- * will continue.
- *
- * Interrupting implies stopping, so enqueue operations
- * will be signalled <queue-stopped>.
- *
- * Dequeue operations will signal <queue-interrupt>.
- *
  */
 define class <locked-queue> (<queue>)
   // Internal data structure
@@ -85,9 +57,6 @@ define method backlog (queue :: <locked-queue>)
 end method;
 
 /* Enqueue a work item onto the queue
- *
- * May signal <queue-stopped> when
- * the queue no longer accepts work.
  */
 define method enqueue (queue :: <locked-queue>, object :: <object>)
  => ();
@@ -105,9 +74,6 @@ define method enqueue (queue :: <locked-queue>, object :: <object>)
 end method;
 
 /* Dequeue the next available item from the queue
- *
- * May signal <queue-interrupt> or <queue-stopped>
- * when the queue has reached the respective state.
  */
 define method dequeue (queue :: <locked-queue>)
  => (object :: <object>);
@@ -138,12 +104,6 @@ define method dequeue (queue :: <locked-queue>)
 end method;
 
 /* Stops the queue so that submitted work can still continue
- *
- * Submitters will be signalled <queue-stopped>
- * in ENQUEUE if they try to submit further work.
- *
- * Receivers will be signalled <queue-stopped>
- * in DEQUEUE once the queue has been drained.
  */
 define method stop-queue (queue :: <locked-queue>)
  => ();
@@ -155,12 +115,6 @@ define method stop-queue (queue :: <locked-queue>)
 end method;
 
 /* Interrupts the queue, abandoning submitted work
- *
- * Submitters will be signalled <queue-stopped>
- * in ENQUEUE if they try to submit further work.
- *
- * Receivers will be signalled <queue-interrupt>
- * at the first DEQUEUE operation they perform.
  */
 define method interrupt-queue (queue :: <locked-queue>)
  => ();
