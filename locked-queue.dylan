@@ -49,7 +49,7 @@ end class;
 
 /* Find out how much outstanding work the queue has
  */
-define method backlog (queue :: <locked-queue>)
+define method queue-backlog (queue :: <locked-queue>)
  => (size-of-queue :: <integer>);
   with-lock (queue-lock(queue))
     size(queue-deque(queue));

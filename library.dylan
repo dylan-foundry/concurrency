@@ -24,6 +24,7 @@ define module concurrency
   export
     <queue>,
     queue-name,
+    queue-backlog,
     enqueue,
     dequeue,
     <locked-queue>,
