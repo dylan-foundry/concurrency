@@ -15,15 +15,21 @@ define method initialize (work :: <locked-work>, #rest keys, #key, #all-keys)
   work-notification(work) := make(<notification>, lock: work-lock(work));
 end method;
 
-define method work-wait (work :: <locked-work>, state :: <symbol>)
+define constant $work-started = #"started";
+define constant $work-finished = #"finished";
+define constant <work-state> = one-of($work-started, $work-finished);
+
+// Wait for a work item to reach the given state.  Valid states are
+// $work-started and $work-finished.
+define method work-wait (work :: <locked-work>, state :: <work-state>)
   => ();
   with-lock (work-lock(work))
     iterate again ()
       synchronize-side-effects();
       case
-        state == started: & work-started?(work) =>
+        state == $work-started & work-started?(work) =>
           #t;
-        state == finished: & work-finished?(work) =>
+        state == $work-finished & work-finished?(work) =>
           #t;
         otherwise =>
           wait-for(work-notification(work));
