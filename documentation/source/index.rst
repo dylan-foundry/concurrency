@@ -87,6 +87,8 @@ Executors
 
 .. generic-function:: executor-request
 
+   Request that this executor do some work.
+
    :signature: executor-request (executor work) => ()
 
    :parameter executor: An instance of :class:`<executor>`.
@@ -94,6 +96,10 @@ Executors
 
 .. method:: executor-request
    :specializer: <function>
+
+   A convenience method that converts the given function into a
+   :class:`<work>` object.  The function must not have any required
+   arguments.
 
    :signature: executor-request (executor function) => ()
 
@@ -299,7 +305,7 @@ Work
 
    :superclasses: :drm:`<object>`
 
-   :keyword function:
+   :keyword function: A function to perform some work.  The function must not have any required arguments.
 
    :operations:
 
@@ -347,8 +353,30 @@ Work
 
 .. generic-function:: work-wait
 
+   Wait for a work item to reach the given state.  Valid states are
+   :const:`$work-started` and :const:`$work-finished`.
+
+
    :signature: work-wait (work state) => ()
 
    :parameter work: An instance of :class:`<locked-work>`.
-   :parameter state: An instance of :drm:`<symbol>`. One of ``started:`` or ``finished:``.
+   :parameter state: An instance of :class:`<work-state>`. One of
+      :const:`$work-started` or :const:`$work-finished`.
 
+.. constant:: $work-started
+
+   Used with :func:`work-wait` to indicate that you want to wait until
+   work has started executing.
+
+   :type: :class:`<work-state>`
+
+   See also: :const:`$work-finished`
+
+.. constant:: $work-finished
+
+   Used with :func:`work-wait` to indicate that you want to wait until
+   work has finished executing.
+
+   :type: :class:`<work-state>`
+
+   See also: :const:`$work-finished`

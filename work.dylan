@@ -4,7 +4,7 @@ author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
 define class <work> (<object>)
-  // function performing the work
+  // function performing the work, must not have any required arguments
   constant slot work-function :: <function>,
     required-init-keyword: function:;
 

@@ -43,6 +43,8 @@ define module concurrency
     work-started?,
     work-finished?,
     <locked-work>,
-    work-wait;
+    work-wait,
+    $work-started,
+    $work-finished;
 
 end module;
