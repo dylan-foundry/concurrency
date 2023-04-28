@@ -62,7 +62,7 @@ define method initialize (executor :: <single-thread-executor>, #rest args, #key
   next-method();
   let threads = make(<simple-object-vector>, size: 1);
   threads[0] := make(<thread>,
-                     name: concatenate(executor-name(executor), " worker"),
+                     name: executor-name(executor),
                      function: curry(%executor-thread, executor, 0));
   executor-threads(executor) := threads;
 end method;
@@ -78,11 +78,10 @@ define method initialize (executor :: <fixed-thread-executor>, #rest args, #key,
   next-method();
   let size = executor-thread-count(executor);
   let threads = make(<simple-object-vector>, size: size);
+  let name = executor-name(executor);
   for(id from 0 below size)
     threads[id] := make(<thread>,
-                        name: concatenate(executor-name(executor),
-                                          " worker ",
-                                          integer-to-string(id)),
+                        name: concatenate(name, " ", integer-to-string(id)),
                         function: curry(%executor-thread, executor, id));
   end for;
   executor-threads(executor) := threads;
