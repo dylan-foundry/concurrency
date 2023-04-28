@@ -4,8 +4,8 @@ author: Ingo Albrecht <prom@berlin.ccc.de>
 copyright: See accompanying file LICENSE
 
 define abstract class <executor> (<object>)
-  constant slot executor-name :: <string> = "executor",
-    init-keyword: name:;
+  constant slot executor-name :: <string>,
+    required-init-keyword: name:;
 end class;
 
 // Request that this executor do some work.
